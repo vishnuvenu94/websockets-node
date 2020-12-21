@@ -62,7 +62,44 @@ wsServer.on('request', (request: any) => {
     }
 
     if (result.method === 'join') {
-      console.log(result);
+      const clientId = result.clientId;
+      const sessionId = result.sessionId;
+      const session = sessions[sessionId];
+
+      session.participants.push({
+        clientId: clientId,
+      });
+
+      const payLoad = {
+        method: 'join',
+        session: session,
+      };
+      //loop through all clients and tell them that people has joined
+      session.participants.forEach((c) => {
+        clients[c.clientId].connection.send(JSON.stringify(payLoad));
+      });
+    }
+
+    if (result.method == 'timerUpdate') {
+      const sessionId = result.sessionId;
+      const clientId = result.clientId;
+      const timer = result.timer;
+      const session = sessions[sessionId];
+      const isHost = session.host === clientId ? true : false;
+      console.log(result, isHost);
+
+      if (isHost) {
+        session.timer += timer;
+        const payLoad = {
+          method: 'timerUpdate',
+          session: session,
+        };
+        updateTimerState();
+
+        session.participants.forEach((c) => {
+          clients[c.clientId].connection.send(JSON.stringify(payLoad));
+        });
+      }
     }
   });
   const clientId = uuidv4();
@@ -79,3 +116,21 @@ wsServer.on('request', (request: any) => {
   console.log(payLoad);
   connection.send(JSON.stringify(payLoad));
 });
+
+function updateTimerState() {
+  //{"gameid", fasdfsf}
+  for (const sessionId of Object.keys(sessions)) {
+    const session = sessions[sessionId];
+    if (session.timer > 0) session.timer--;
+    const payLoad = {
+      method: 'timerUpdate',
+      session: session,
+    };
+
+    session.participants.forEach((c) => {
+      clients[c.clientId].connection.send(JSON.stringify(payLoad));
+    });
+  }
+
+  setTimeout(updateTimerState, 1000);
+}

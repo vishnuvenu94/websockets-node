@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {ws} from "../App"
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from "react-router-dom";
@@ -7,17 +7,26 @@ import Button from '@material-ui/core/Button';
 
 
 
+
 function HomeComponent() {
     const history = useHistory();
+    const [showJoinButton,setShowJoinButton] = useState(false);
+   
+    const [sessionId,setSessionId] = useState("")
+    const [clientId,setClientId] = useState("")
+    const [name,setName] = useState("")
+    
+
+
  
-  let name;
-  let clientId
+ 
+  
  
 
 
 
   function createRoom(){
-    console.log(name)
+    
     
     const payLoad = {
       "method": "create",
@@ -25,7 +34,7 @@ function HomeComponent() {
       "name":name
       
   }
-  console.log(clientId)
+  
   
   ws.send(JSON.stringify(payLoad));
   }
@@ -38,13 +47,19 @@ function HomeComponent() {
     //message.data
     const response = JSON.parse(message.data);
     if(response.method == "connect"){
-      clientId = response.clientId
+      setClientId(response.clientId)
 
     }
     if(response.method == "create"){
-        console.log(response)
-      
-      history.push(`/host/${clientId}/${response.session.id}`);
+        
+         setSessionId(response.session.id);
+       
+
+    setShowJoinButton(true);
+    
+   
+
+
     }
     
    
@@ -61,10 +76,19 @@ function HomeComponent() {
     return (
     
         <div>
-             <TextField id="standard-basic" label="Standard" onChange={(e)=> name = e.target.value}/>
+             <TextField id="standard-basic" label="Standard" onChange={(e)=> setName(e.target.value)}/>
       <Button variant="contained" color="primary" onClick={createRoom}>
       Create Room
     </Button>
+    {showJoinButton && (<div>
+      <Button variant="contained" color="primary" onClick={()=>history.push(`/host/${clientId}/${sessionId}`)}>
+      Join Room 
+    </Button>
+    
+    <a href={`/participant/${sessionId}`}>{`http:localhost:3000/participant/${sessionId}`}</a>
+    </div>)
+    }
+
         </div>
      
     );

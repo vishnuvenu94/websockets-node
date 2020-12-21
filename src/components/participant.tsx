@@ -3,20 +3,30 @@ import {ws} from "../App"
 
 
 
-
+let participantName = "sds"
 function ParticipantComponent(props:any) {
-    let participantName;
-    let participantId;
+    const [timer,setTimer] = useState(0);
+    const [participants,setParticipants] = useState([]);
+    const [participantId,setParsipitantId] = useState("");
+    const [sessionId,setSessionId] = useState("");
+   
+
+    
+   
     console.log(props)
+    
      ws.onmessage = message => {
         //message.data
         const response = JSON.parse(message.data);
         console.log(response)
     
         if(response.method == "connect"){
-            participantId=response.clientId;
-            participantName = prompt("Please enter your user name.");
+            const participantId = response.clientId;
+            setParsipitantId(participantId);
+            
+           
             const sessionId = props.match.params.sessionId
+            setSessionId(sessionId)
             const payLoad = {
                 method:"join",
                 clientId:participantId,
@@ -30,6 +40,17 @@ function ParticipantComponent(props:any) {
           
          
         }
+        if(response.method == "join"){
+            setParticipants(response.session.participants);
+            setTimer(response.session.timer)
+            console.log(participants,timer)
+        }
+
+        if(response.method == "timerUpdate"){
+            setTimer(response.session.timer)
+            console.log(response.session.timer)
+        }
+        console.log(participants,timer)
         
        
         //connect
@@ -47,6 +68,8 @@ function ParticipantComponent(props:any) {
     
         <div>
             Hello I am participant
+    <h1>dfd{JSON.stringify(participants)}</h1>
+    {timer}
         </div>
      
     );
