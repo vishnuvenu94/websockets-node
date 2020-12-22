@@ -1,14 +1,41 @@
 import React, { useState, useEffect } from 'react';
+import Grid from '@material-ui/core/Grid';
+import { makeStyles } from '@material-ui/core/styles';
+import { IconButton } from '@material-ui/core';
+import VideocamOffRoundedIcon from '@material-ui/icons/VideocamOffRounded';
+import MicOffRoundedIcon from '@material-ui/icons/MicOffRounded';
+import CallEndRoundedIcon from '@material-ui/icons/CallEndRounded';
 import { ws } from '../App';
 import { Howl } from 'howler';
 
+import MediaCard from './participantCard';
+
 const sound = new Howl({ src: ['/sound.mp3'] });
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    marginTop: '25px',
+  },
+  timer: {
+    color: 'red',
+    fontSize: '30px',
+  },
+  icon: {
+    borderStyle: 'solid',
+    border: 1,
+    cursor: 'pointer',
+  },
+}));
+
 function ParticipantComponent(props: any) {
-  const [timer, setTimer] = useState(null);
+  const classes = useStyles();
+  const [timer, setTimer] = useState(0);
   const [participants, setParticipants] = useState([]);
   const [participantId, setParticipantId] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [hostName, setHostName] = useState('');
+
   const [playSound, setPlaySound] = useState(false);
 
   const [participantName, setParticipantName] = useState('');
@@ -23,7 +50,7 @@ function ParticipantComponent(props: any) {
       setPlaySound(false);
     }
     console.log(participantName);
-  }, [timer]);
+  }, [timer, hostName]);
 
   console.log(props);
 
@@ -47,7 +74,11 @@ function ParticipantComponent(props: any) {
       ws.send(JSON.stringify(payLoad));
     }
     if (response.method == 'join') {
+      console.log(response);
       const sessionParticipants = response.session.participants;
+
+      setHostName(response.hostName);
+
       const otherParticipants = sessionParticipants.filter(
         (participant) => participant.clientId !== participantId
       );
@@ -67,11 +98,59 @@ function ParticipantComponent(props: any) {
   };
 
   return (
-    <div>
-      Hello I am participant
-      <h1>dfd{JSON.stringify(participants)}</h1>
-      <h2>{participantName}</h2>
-      {timer}
+    <div className={classes.root}>
+      <Grid container>
+        <Grid item xs={4} container spacing={1} direction='column'>
+          {!participants.length && (
+            <div>
+              <p>No other participants yet</p>
+            </div>
+          )}
+          {participants.map((participant) => {
+            return (
+              <Grid item>
+                <MediaCard participant={participant} />
+              </Grid>
+            );
+          })}
+        </Grid>
+
+        <Grid item xs={8} container direction='column'>
+          <Grid item>
+            <img
+              src='/349-3499617_person-placeholder-person-placeholder.png'
+              alt='placeholder'
+            ></img>
+          </Grid>
+          <Grid item>
+            <p>Host:{hostName}</p>
+          </Grid>
+
+          <Grid item container direction='row' justify='center' spacing={1}>
+            <Grid item>
+              <IconButton color='primary' classes={{ root: classes.icon }}>
+                <VideocamOffRoundedIcon></VideocamOffRoundedIcon>
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton color='primary' classes={{ root: classes.icon }}>
+                <MicOffRoundedIcon></MicOffRoundedIcon>
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton color='primary' classes={{ root: classes.icon }}>
+                <CallEndRoundedIcon></CallEndRoundedIcon>
+              </IconButton>
+            </Grid>
+          </Grid>
+          {timer > 0 && (
+            <Grid item className={classes.timer}>
+              <p>{timer}s</p>
+            </Grid>
+          )}
+        </Grid>
+      </Grid>
+      {/* <h1>dfd{JSON.stringify(participants)}</h1> */}
     </div>
   );
 }

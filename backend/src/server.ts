@@ -78,6 +78,7 @@ wsServer.on('request', (request: any) => {
       const payLoad = {
         method: 'join',
         session: session,
+        hostName: clients[session.host].name,
       };
 
       clients[session.host].connection.send(JSON.stringify(payLoad));
