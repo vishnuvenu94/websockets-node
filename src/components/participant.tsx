@@ -1,18 +1,45 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {ws} from "../App"
+
+import {Howl} from "howler";
+
+
+
 
 
 
 let participantName = "sds"
+const sound = new Howl({src:["/sound.mp3"]})
+
+
+
 function ParticipantComponent(props:any) {
-    const [timer,setTimer] = useState(0);
+    const [timer,setTimer] = useState(null);
     const [participants,setParticipants] = useState([]);
     const [participantId,setParsipitantId] = useState("");
     const [sessionId,setSessionId] = useState("");
+    const [playSound,setPlaySound] = useState(false)
+
+    // const [play] = useSound(so);
+   
+    
+        useEffect(()=>{
+            if(playSound){
+                sound.play();
+                setPlaySound(false)
+            }
+
+        },[timer])
+    
+   
+    
+    
    
 
     
+  
    
+
     console.log(props)
     
      ws.onmessage = message => {
@@ -47,8 +74,15 @@ function ParticipantComponent(props:any) {
         }
 
         if(response.method == "timerUpdate"){
-            setTimer(response.session.timer)
-            console.log(response.session.timer)
+           
+            const time = response.session.timer;
+            console.log(time)
+            if(time == 0 ){
+                setPlaySound(true)
+            }
+            setTimer(time)
+            
+            
         }
         console.log(participants,timer)
         
@@ -63,10 +97,14 @@ function ParticipantComponent(props:any) {
    
   
     
-   
+    
     return (
+        
     
         <div>
+           
+    
+      
             Hello I am participant
     <h1>dfd{JSON.stringify(participants)}</h1>
     {timer}

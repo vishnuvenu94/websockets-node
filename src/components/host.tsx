@@ -6,14 +6,15 @@ import Button from '@material-ui/core/Button';
 
 
 
+
 function HostComponent(props:any) {
-    const [timer,setTimer] = useState(0);
+    const [timer,setTimer] = useState(null);
     // const [sessionId,setSessionId] = useState("")
 
     let sessionId = props.match.params.sessionId;
     let hostId = props.match.params.hostId;
-   
 
+    
     const addTime = (time:number) => {
         setTimer(time);
         const payLoad = {

@@ -24,6 +24,7 @@ interface Client {
 }
 const clients: { [clientId: string]: Client } = {};
 const sessions: { [sessionId: string]: Session } = {};
+let timerState: NodeJS.Timeout;
 
 const wsServer = new websocketServer({
   httpServer: httpServer,
@@ -118,19 +119,22 @@ wsServer.on('request', (request: any) => {
 });
 
 function updateTimerState() {
+  clearTimeout(timerState);
   //{"gameid", fasdfsf}
   for (const sessionId of Object.keys(sessions)) {
     const session = sessions[sessionId];
-    if (session.timer > 0) session.timer--;
-    const payLoad = {
-      method: 'timerUpdate',
-      session: session,
-    };
+    if (session.timer > 0) {
+      session.timer--;
+      const payLoad = {
+        method: 'timerUpdate',
+        session: session,
+      };
 
-    session.participants.forEach((c) => {
-      clients[c.clientId].connection.send(JSON.stringify(payLoad));
-    });
+      session.participants.forEach((c) => {
+        clients[c.clientId].connection.send(JSON.stringify(payLoad));
+      });
+    }
   }
 
-  setTimeout(updateTimerState, 1000);
+  timerState = setTimeout(updateTimerState, 1000);
 }
