@@ -1,116 +1,79 @@
-import React,{useState,useEffect} from "react";
-import {ws} from "../App"
+import React, { useState, useEffect } from 'react';
+import { ws } from '../App';
+import { Howl } from 'howler';
 
-import {Howl} from "howler";
+const sound = new Howl({ src: ['/sound.mp3'] });
 
+function ParticipantComponent(props: any) {
+  const [timer, setTimer] = useState(null);
+  const [participants, setParticipants] = useState([]);
+  const [participantId, setParticipantId] = useState('');
+  const [sessionId, setSessionId] = useState('');
+  const [playSound, setPlaySound] = useState(false);
 
+  const [participantName, setParticipantName] = useState('');
 
+  useEffect(() => {
+    setParticipantName(prompt('What is your name'));
+  }, []);
 
+  useEffect(() => {
+    if (playSound) {
+      sound.play();
+      setPlaySound(false);
+    }
+    console.log(participantName);
+  }, [timer]);
 
+  console.log(props);
 
-let participantName = "sds"
-const sound = new Howl({src:["/sound.mp3"]})
+  ws.onmessage = (message) => {
+    //message.data
+    const response = JSON.parse(message.data);
 
+    if (response.method == 'connect') {
+      const clientId = response.clientId;
+      setParticipantId(clientId);
 
+      const sessionIdNum = props.match.params.sessionId;
+      setSessionId(sessionIdNum);
+      const payLoad = {
+        method: 'join',
+        clientId,
+        name: participantName,
+        sessionId: sessionIdNum,
+      };
 
-function ParticipantComponent(props:any) {
-    const [timer,setTimer] = useState(null);
-    const [participants,setParticipants] = useState([]);
-    const [participantId,setParsipitantId] = useState("");
-    const [sessionId,setSessionId] = useState("");
-    const [playSound,setPlaySound] = useState(false)
+      ws.send(JSON.stringify(payLoad));
+    }
+    if (response.method == 'join') {
+      const sessionParticipants = response.session.participants;
+      const otherParticipants = sessionParticipants.filter(
+        (participant) => participant.clientId !== participantId
+      );
+      setParticipants(otherParticipants);
+      setTimer(response.session.timer);
+    }
 
-    // const [play] = useSound(so);
-   
-    
-        useEffect(()=>{
-            if(playSound){
-                sound.play();
-                setPlaySound(false)
-            }
+    if (response.method == 'timerUpdate') {
+      const time = response.session.timer;
 
-        },[timer])
-    
-   
-    
-    
-   
-
-    
-  
-   
-
-    console.log(props)
-    
-     ws.onmessage = message => {
-        //message.data
-        const response = JSON.parse(message.data);
-        console.log(response)
-    
-        if(response.method == "connect"){
-            const participantId = response.clientId;
-            setParsipitantId(participantId);
-            
-           
-            const sessionId = props.match.params.sessionId
-            setSessionId(sessionId)
-            const payLoad = {
-                method:"join",
-                clientId:participantId,
-                name:participantName,
-                sessionId
-
-            }
-
-            ws.send(JSON.stringify(payLoad));
-
-          
-         
-        }
-        if(response.method == "join"){
-            setParticipants(response.session.participants);
-            setTimer(response.session.timer)
-            console.log(participants,timer)
-        }
-
-        if(response.method == "timerUpdate"){
-           
-            const time = response.session.timer;
-            console.log(time)
-            if(time == 0 ){
-                setPlaySound(true)
-            }
-            setTimer(time)
-            
-            
-        }
-        console.log(participants,timer)
-        
-       
-        //connect
+      if (time == 0) {
+        setPlaySound(true);
       }
+      setTimer(time);
+    }
+    console.log(participants, timer);
+  };
 
-    
- 
-  
-  
-   
-  
-    
-    
-    return (
-        
-    
-        <div>
-           
-    
-      
-            Hello I am participant
-    <h1>dfd{JSON.stringify(participants)}</h1>
-    {timer}
-        </div>
-     
-    );
-  }
-  
-  export default ParticipantComponent;
+  return (
+    <div>
+      Hello I am participant
+      <h1>dfd{JSON.stringify(participants)}</h1>
+      <h2>{participantName}</h2>
+      {timer}
+    </div>
+  );
+}
+
+export default ParticipantComponent;

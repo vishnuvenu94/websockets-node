@@ -43,38 +43,44 @@ wsServer.on('request', (request: any) => {
       const clientName = result.name;
       console.log(clients[clientId]);
       console.log(clients, clientId);
+      if (clientId && clientName) {
+        clients[clientId].name = clientName;
+        const sessionId = uuidv4();
+        sessions[sessionId] = {
+          id: sessionId,
+          host: clientId,
+          participants: [],
+          timer: 0,
+        };
 
-      clients[clientId].name = clientName;
-      const sessionId = uuidv4();
-      sessions[sessionId] = {
-        id: sessionId,
-        host: clientId,
-        participants: [],
-        timer: 0,
-      };
+        const payLoad = {
+          method: 'create',
+          session: sessions[sessionId],
+        };
 
-      const payLoad = {
-        method: 'create',
-        session: sessions[sessionId],
-      };
-
-      const con = clients[clientId].connection;
-      con.send(JSON.stringify(payLoad));
+        const con = clients[clientId].connection;
+        con.send(JSON.stringify(payLoad));
+      }
     }
 
     if (result.method === 'join') {
       const clientId = result.clientId;
       const sessionId = result.sessionId;
       const session = sessions[sessionId];
+      const name = result.name;
+      clients[clientId].name = name;
 
       session.participants.push({
         clientId: clientId,
+        name: name,
       });
 
       const payLoad = {
         method: 'join',
         session: session,
       };
+
+      clients[session.host].connection.send(JSON.stringify(payLoad));
       //loop through all clients and tell them that people has joined
       session.participants.forEach((c) => {
         clients[c.clientId].connection.send(JSON.stringify(payLoad));
