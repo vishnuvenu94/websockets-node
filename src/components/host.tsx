@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     borderStyle: 'solid',
     border: 1,
-    cursor: 'pointer',
+    cursor: 'default',
   },
   timerButtons: {
     borderStyle: 'solid',
@@ -104,7 +104,7 @@ function HostComponent(props: any) {
   return (
     <div>
       <div className={classes.root}>
-        {participants.length === 0 && (
+        {!participants.length && (
           <div className={classes.paperParent} style={{ textAlign: 'center' }}>
             <Paper elevation={3} className={classes.paper}>
               <p>No participants yet</p>
@@ -130,7 +130,7 @@ function HostComponent(props: any) {
             );
           })}
 
-          {participants.length && (
+          {participants.length > 0 && (
             <Grid item container spacing={1} style={{ marginTop: '30px' }}>
               <Grid item container xs={6} justify='flex-end' spacing={1}>
                 <Grid item>

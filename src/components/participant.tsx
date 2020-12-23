@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     borderStyle: 'solid',
     border: 1,
-    cursor: 'pointer',
+    cursor: 'default',
   },
 }));
 
@@ -95,7 +95,6 @@ function ParticipantComponent(props: any) {
       }
       setTimer(time);
     }
-    console.log(participants, timer);
   };
 
   return (
