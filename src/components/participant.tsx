@@ -38,7 +38,7 @@ function ParticipantComponent(props: any) {
 
   const [playSound, setPlaySound] = useState(false);
 
-  const [participantName, setParticipantName] = useState('');
+  const [participantName, setParticipantName] = useState<String | null>('');
 
   useEffect(() => {
     setParticipantName(prompt('What is your name'));
@@ -106,7 +106,7 @@ function ParticipantComponent(props: any) {
               <p>No other participants yet.</p>
             </div>
           )}
-          {participants.map((participant) => {
+          {participants.map((participant: any) => {
             return (
               <Grid item key={participant.clientId}>
                 <MediaCard participant={participant} />

@@ -109,7 +109,7 @@ function HostComponent(props: any) {
         )}
 
         <Grid container spacing={1}>
-          {participants.map((participant) => {
+          {participants.map((participant: any) => {
             return (
               <Grid
                 item
