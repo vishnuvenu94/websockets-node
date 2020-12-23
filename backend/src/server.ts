@@ -38,6 +38,17 @@ wsServer.on('request', (request: any) => {
     const result = JSON.parse(message.utf8Data);
     //I have received a message from the client
     //a user want to create a new game
+
+    if (result.method == 'get') {
+      const clientId = result.clientId;
+      const sessionId = result.sessionId;
+      const payLoad = {
+        method: 'get',
+        session: sessions[sessionId],
+      };
+      const con = clients[clientId].connection;
+      con.send(JSON.stringify(payLoad));
+    }
     if (result.method === 'create') {
       const clientId = result.clientId;
       const clientName = result.name;
@@ -97,7 +108,7 @@ wsServer.on('request', (request: any) => {
       console.log(result, isHost);
 
       if (isHost) {
-        session.timer += timer;
+        session.timer = timer;
         const payLoad = {
           method: 'timerUpdate',
           session: session,

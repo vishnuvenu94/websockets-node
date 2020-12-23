@@ -108,7 +108,7 @@ function ParticipantComponent(props: any) {
           )}
           {participants.map((participant) => {
             return (
-              <Grid item>
+              <Grid item key={participant.clientId}>
                 <MediaCard participant={participant} />
               </Grid>
             );
