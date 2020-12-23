@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import { Participant } from './host';
 
 const useStyles = makeStyles({
   root: {
@@ -17,7 +18,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function MediaCard(props: any) {
+interface Props {
+  participant: Participant;
+}
+
+const MediaCard: React.FC<Props> = ({ participant }) => {
   const classes = useStyles();
 
   return (
@@ -30,10 +35,11 @@ export default function MediaCard(props: any) {
         />
         <CardContent>
           <Typography gutterBottom variant='h5' component='h2'>
-            <p>Name:{props.participant.name}</p>
+            <p>Name:{participant.name}</p>
           </Typography>
         </CardContent>
       </CardActionArea>
     </Card>
   );
-}
+};
+export default MediaCard;

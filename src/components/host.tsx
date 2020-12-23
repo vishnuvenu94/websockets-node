@@ -54,6 +54,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+export interface Participant {
+  clientId: String;
+  name: String;
+}
+
 function HostComponent(props: any) {
   const classes = useStyles();
 
@@ -63,7 +68,6 @@ function HostComponent(props: any) {
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
-    console.log('test');
     const payload = {
       method: 'get',
       sessionId,
@@ -109,7 +113,7 @@ function HostComponent(props: any) {
         )}
 
         <Grid container spacing={1}>
-          {participants.map((participant: any) => {
+          {participants.map((participant: Participant) => {
             return (
               <Grid
                 item

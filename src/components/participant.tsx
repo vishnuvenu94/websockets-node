@@ -7,6 +7,7 @@ import MicOffRoundedIcon from '@material-ui/icons/MicOffRounded';
 import CallEndRoundedIcon from '@material-ui/icons/CallEndRounded';
 import { ws } from '../App';
 import { Howl } from 'howler';
+import { Participant } from './host';
 
 import MediaCard from './participantCard';
 
@@ -106,7 +107,7 @@ function ParticipantComponent(props: any) {
               <p>No other participants yet.</p>
             </div>
           )}
-          {participants.map((participant: any) => {
+          {participants.map((participant: Participant) => {
             return (
               <Grid item key={participant.clientId}>
                 <MediaCard participant={participant} />
