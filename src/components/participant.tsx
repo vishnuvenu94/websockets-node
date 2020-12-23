@@ -102,8 +102,8 @@ function ParticipantComponent(props: any) {
       <Grid container>
         <Grid item xs={4} container spacing={1} direction='column'>
           {!participants.length && (
-            <div>
-              <p>No other participants yet</p>
+            <div style={{ textAlign: 'center' }}>
+              <p>No other participants yet.</p>
             </div>
           )}
           {participants.map((participant) => {
@@ -128,17 +128,17 @@ function ParticipantComponent(props: any) {
 
           <Grid item container direction='row' justify='center' spacing={1}>
             <Grid item>
-              <IconButton color='primary' classes={{ root: classes.icon }}>
+              <IconButton classes={{ root: classes.icon }}>
                 <VideocamOffRoundedIcon></VideocamOffRoundedIcon>
               </IconButton>
             </Grid>
             <Grid item>
-              <IconButton color='primary' classes={{ root: classes.icon }}>
+              <IconButton classes={{ root: classes.icon }}>
                 <MicOffRoundedIcon></MicOffRoundedIcon>
               </IconButton>
             </Grid>
             <Grid item>
-              <IconButton color='primary' classes={{ root: classes.icon }}>
+              <IconButton classes={{ root: classes.icon }}>
                 <CallEndRoundedIcon></CallEndRoundedIcon>
               </IconButton>
             </Grid>
@@ -150,7 +150,6 @@ function ParticipantComponent(props: any) {
           )}
         </Grid>
       </Grid>
-      {/* <h1>dfd{JSON.stringify(participants)}</h1> */}
     </div>
   );
 }
