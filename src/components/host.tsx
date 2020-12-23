@@ -55,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface Participant {
-  clientId: String;
-  name: String;
+  clientId: string;
+  name: string;
 }
 
 function HostComponent(props: any) {
