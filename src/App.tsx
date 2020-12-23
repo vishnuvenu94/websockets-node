@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import HostComponent from './components/host';
 import HomeComponent from './components/home';
 import ParticipantComponent from './components/participant';
-
+//start connection
 export const ws = new WebSocket('ws://localhost:9090');
 
 function App() {

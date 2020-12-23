@@ -56,7 +56,7 @@ function HomeComponent() {
 
   return (
     <div className={classes.root}>
-      <h1>Websockets</h1>
+      <h1>Mock Video Conference </h1>
       <Grid
         container
         spacing={2}

@@ -41,7 +41,7 @@ function ParticipantComponent(props: any) {
   const [participantName, setParticipantName] = useState<String | null>('');
 
   useEffect(() => {
-    setParticipantName(prompt('What is your name'));
+    setParticipantName(prompt('Please Enter your username'));
   }, []);
 
   useEffect(() => {

@@ -40,6 +40,7 @@ wsServer.on('request', (request: any) => {
         method: 'get',
         session: sessions[sessionId],
       };
+      //sends out session data
       const con = clients[clientId].connection;
       con.send(JSON.stringify(payload));
     }
@@ -48,6 +49,7 @@ wsServer.on('request', (request: any) => {
       const clientName = result.name;
       console.log(clients[clientId]);
       console.log(clients, clientId);
+      //create a session
       if (clientId && clientName) {
         clients[clientId].name = clientName;
         const sessionId = uuidv4();
@@ -69,6 +71,7 @@ wsServer.on('request', (request: any) => {
     }
 
     if (result.method === 'join') {
+      //add a client to a session
       const clientId = result.clientId;
       const sessionId = result.sessionId;
       const session = sessions[sessionId];
@@ -87,7 +90,7 @@ wsServer.on('request', (request: any) => {
       };
 
       clients[session.host].connection.send(JSON.stringify(payload));
-
+      //send clients in session the updated session data
       session.participants.forEach((c) => {
         clients[c.clientId].connection.send(JSON.stringify(payload));
       });
@@ -129,7 +132,7 @@ wsServer.on('request', (request: any) => {
   console.log(payload);
   connection.send(JSON.stringify(payload));
 });
-
+//function to update timer every second and send the information across all the connections within sessions
 function updateTimerState() {
   clearTimeout(timeoutState);
 
